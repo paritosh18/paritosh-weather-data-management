@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import users from '../data/users.json';
+import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../slices/weatherSlice';
 import { useNavigate } from 'react-router-dom';
 
-//It passes handleLogin as the onLogin prop to the Login component.
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -12,28 +11,36 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
 
   console.log("Login component received onLogin: ", onLogin);
-  console.log("Users in Login component: ", users);
 
-  const handleSubmit = (e) => {
-    
-    const user = users.find(u => u.username === username && u.password === password);
-    if (user) {
-      dispatch(loginUser(user));
-      if (typeof onLogin === 'function') {
-        onLogin(); 
-        navigate('/') // Call onLogin when user is authenticated
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get('http://localhost:3000/users');
+      const users = response.data;
+      console.log("Users in Login component: ", users);
+
+      const user = users.find(u => u.username === username && u.password === password);
+      if (user) {
+        dispatch(loginUser(user));
+        if (typeof onLogin === 'function') {
+          onLogin(); 
+          navigate('/'); // Call onLogin when user is authenticated
+        } else {
+          console.error("onLogin is not a function");
+        }
       } else {
-        console.error("onLogin is not a function");
+        alert('Invalid credentials. If you are not registered, please register.');
       }
-    } else {
-      alert('Invalid credentials. If you are not registered, please register.');
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
- 
   const handleRegister = () => {
     navigate('/register');
   };
+
   return (
     <div className="container">
       <form className="login-form" onSubmit={handleSubmit}>

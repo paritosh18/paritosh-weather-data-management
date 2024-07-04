@@ -19,6 +19,7 @@ const weatherSlice = createSlice({
     registerUser: (state, action) => {
       console.log('New user registered:', action.payload);
   },
+  
 },
 });
 

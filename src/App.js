@@ -10,9 +10,6 @@ import './index.css';
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [users, setUsers] = useState([
-    { username: 'test', password: 'test' }
-  ]);
 
   useEffect(() => {
     // Check if user is logged in from local storage
@@ -32,17 +29,15 @@ const App = () => {
     localStorage.removeItem('loggedIn'); // Remove login state from local storage
   };
 
-  const handleRegister = (newUser) => {
-    setUsers([...users, newUser]);
-  };
+
 
   return (
     <Provider store={store}>
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/login" element={<Login onLogin={handleLogin} users={users} />} />
-            <Route path="/register" element={<Register onRegister={handleRegister} />} />
+            <Route path="/login" element={<Login onLogin={handleLogin}  />} />
+            <Route path="/register" element={<Register />} />
             <Route
               path="/"
               element={
@@ -53,7 +48,7 @@ const App = () => {
                     <button className="btn-logout"onClick={handleLogout}>Logout</button> {/* Add Logout Button */}
                   </div>
                 ) : (
-                  <Login onLogin={handleLogin} users={users} />
+                  <Login onLogin={handleLogin}  />
                 )
               }
             />

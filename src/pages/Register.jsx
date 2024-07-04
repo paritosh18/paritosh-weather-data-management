@@ -1,30 +1,37 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import users from '../data/users.json';
+import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../slices/weatherSlice';
 
-const Register = ({onRegister}) => {
+const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
     }
-    const userExists = users.some(u => u.username === username);
-    if (userExists) {
-      alert('Username already taken');
-    } else {
-      const newUser = { username, password };
-      users.push(newUser); // Save the new user to your data store
-      dispatch(registerUser(newUser));
-      navigate('/login');
+
+    try {
+      const response = await axios.get('http://localhost:3000/users');
+      const users = response.data;
+      const userExists = users.some(u => u.username === username);
+      if (userExists) {
+        alert('Username already taken');
+      } else {
+        const newUser = { username, password };
+        await axios.post('http://localhost:3000/users', newUser);
+        dispatch(registerUser(newUser));
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Error registering user:', error);
     }
   };
 
