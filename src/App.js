@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { Provider } from 'react-redux';
+import store from './store/store';
+import LogWeatherButton from './components/LogWeatherButton';
+import WeatherList from './components/WeatherList';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './index.css';
 
-function App() {
+const App = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [users, setUsers] = useState([
+    { username: 'test', password: 'test' }
+  ]);
+
+  useEffect(() => {
+    // Check if user is logged in from local storage
+    const isLoggedIn = localStorage.getItem('loggedIn');
+    if (isLoggedIn) {
+      setLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setLoggedIn(true);
+    localStorage.setItem('loggedIn', 'true'); // Save login state to local storage
+  };
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    localStorage.removeItem('loggedIn'); // Remove login state from local storage
+  };
+
+  const handleRegister = (newUser) => {
+    setUsers([...users, newUser]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/login" element={<Login onLogin={handleLogin} users={users} />} />
+            <Route path="/register" element={<Register onRegister={handleRegister} />} />
+            <Route
+              path="/"
+              element={
+                loggedIn ? (
+                  <div>
+                    <LogWeatherButton />
+                    <WeatherList />
+                    <button className="btn-logout"onClick={handleLogout}>Logout</button> {/* Add Logout Button */}
+                  </div>
+                ) : (
+                  <Login onLogin={handleLogin} users={users} />
+                )
+              }
+            />
+          </Routes>
+        </div>
+      </Router>
+    </Provider>
   );
-}
+};
 
 export default App;
