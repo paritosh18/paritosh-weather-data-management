@@ -3,11 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../slices/weatherSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -35,12 +40,46 @@ const Register = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
   return (
     <div className="container">
       <form className="register-form" onSubmit={handleSubmit}>
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" />
+        <div className="password-container">
+          <input
+            type={passwordVisible ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          <FontAwesomeIcon
+            icon={passwordVisible ? faEyeSlash : faEye}
+            onClick={togglePasswordVisibility}
+            className="password-icon"
+          />
+        </div>
+
+        <div className="password-container">
+          <input
+            type={confirmPasswordVisible ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
+          />
+          <FontAwesomeIcon
+            icon={confirmPasswordVisible ? faEyeSlash : faEye}
+            onClick={toggleConfirmPasswordVisibility}
+            className="password-icon"
+          />
+        </div>
+
         <button type="submit">Register</button>
       </form>
     </div>
