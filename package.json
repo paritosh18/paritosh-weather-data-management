@@ -22,7 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server-json":"json-server --watch ./src/users.json"
+    "server-json":"json-server --watch ./src/data/users.json"
   },
   "eslintConfig": {
     "extends": [
